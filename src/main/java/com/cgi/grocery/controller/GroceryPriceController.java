@@ -1,16 +1,22 @@
 package com.cgi.grocery.controller;
 
+import com.cgi.grocery.modal.GroceryItem;
 import com.cgi.grocery.modal.PriceData;
+import com.cgi.grocery.modal.ItemPriceTrendingByYear;
 import com.cgi.grocery.service.GroceryService;
 import com.cgi.grocery.service.PriceService;
+import com.cgi.grocery.service.PriceTrendingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/grocery")
 public class GroceryPriceController {
@@ -21,6 +27,8 @@ public class GroceryPriceController {
     @Autowired
     GroceryService groceryService;
 
+    @Autowired
+    PriceTrendingService priceTrendingService;
     @Value("${grocery.file.name}")
     private String fileName;
 
@@ -42,15 +50,15 @@ public class GroceryPriceController {
 
     @GetMapping(value = "/sale-list/{itemName}")
     public ResponseEntity getGrocerySaleDataByItem(@PathVariable String itemName){
-        List<PriceData> result = priceService.getGrocerySaleDataByItem(itemName);
-        return result == null || result.isEmpty()
-                ? ResponseEntity.unprocessableEntity().build()
-                : ResponseEntity.ok(result);
+        List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
+        ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYear(priceByItems);
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/list")
+
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getGrocerySaleDataByItem(){
-        Set<String> result = groceryService.getAllGroceryItems();
+        List<GroceryItem> result = groceryService.getAllGroceryItems();
         return result == null || result.isEmpty()
                 ? ResponseEntity.unprocessableEntity().build()
                 : ResponseEntity.ok(result);
