@@ -48,8 +48,8 @@ public class GroceryPriceController {
                 : ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/sale-list/{itemName}")
-    public ResponseEntity getGrocerySaleDataByItem(@PathVariable String itemName){
+    @GetMapping(value = "/sale-list")
+    public ResponseEntity getGrocerySaleDataByItem(@RequestParam String itemName){
         List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
         ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYear(priceByItems);
         return ResponseEntity.ok(result);
