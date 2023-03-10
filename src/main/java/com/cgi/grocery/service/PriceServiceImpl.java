@@ -54,6 +54,6 @@ public class PriceServiceImpl implements PriceService{
                 }
             }
         });
-        return maxMap.values().stream().toList();
+        return maxMap.values().stream().collect(Collectors.toList());
     }
 }

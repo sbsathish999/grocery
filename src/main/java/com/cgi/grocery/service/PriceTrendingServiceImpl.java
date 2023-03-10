@@ -15,8 +15,8 @@ public class PriceTrendingServiceImpl implements PriceTrendingService{
     public ItemPriceTrendingByYear getMaximumPriceDataByYear(List<PriceData> priceByItems) {
         Map<String, List<Float>> priceByDateMap = convertToPriceDateMap(priceByItems);
         Map<String, Float> maxPriceByDateMap = calculateMaximumPriceByYear(priceByDateMap);
-        List<Float> prices = maxPriceByDateMap.values().stream().toList();
-        List<String> years = maxPriceByDateMap.keySet().stream().toList();
+        List<Float> prices = maxPriceByDateMap.values().stream().collect(Collectors.toList());
+        List<String> years = maxPriceByDateMap.keySet().stream().collect(Collectors.toList());
         return new ItemPriceTrendingByYear(priceByItems.get(0).getItemName(), prices, years);
     }
     protected Map<String, Float> calculateMaximumPriceByYear(Map<String, List<Float>> priceByDateMap) {

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Configuration
 @Slf4j
@@ -42,9 +42,10 @@ public class GrocerySaleDataInitilization {
         List<PriceData> objectList = new ArrayList<>();
         try {
             Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
-            File grocerySaleDataFile = resource.getFile();
-            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
-            XSSFWorkbook workbook = new XSSFWorkbook(grocerySaleDataFile);
+//            File grocerySaleDataFile = resource.getFile();
+//            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
+            IOUtils.setByteArrayMaxOverride(200 * 1024 * 1024);
+            XSSFWorkbook workbook = new XSSFWorkbook(resource.getInputStream());
             XSSFSheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 String itemName = getItemName(row.getCell(1));
@@ -56,8 +57,9 @@ public class GrocerySaleDataInitilization {
                     objectList.add(priceData);
                 }
             }
-            fileInputStream.close();
+            //fileInputStream.close();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("unexpected error : " + e.getMessage());
         }
         return objectList;
