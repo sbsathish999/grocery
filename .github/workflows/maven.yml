@@ -27,6 +27,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        
+    - name: Set JVM options
+        run: echo "::set-env name=JAVA_TOOL_OPTIONS::-Xmx64m"
+        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
