@@ -31,7 +31,7 @@ jobs:
         cache: maven
         
     - name: Increase heap size
-      run: echo "::set-env name=MAVEN_OPTS::-Xmx4g"
+      run: echo "::set-env name=MAVEN_OPTS::-Xmx8g"
         
     - name: Build with Maven
       run: mvn -B package --file pom.xml
