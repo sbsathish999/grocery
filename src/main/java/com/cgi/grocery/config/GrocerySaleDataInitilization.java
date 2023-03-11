@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Configuration
+@Service
 @Slf4j
 public class GrocerySaleDataInitilization {
     @Autowired
@@ -60,7 +61,7 @@ public class GrocerySaleDataInitilization {
 //        }
 //        return objectList;
 //    }
-    @Bean
+   // @Bean
     public List<PriceData> read() {
         List<PriceData> objectList = new ArrayList<>();
         try {
