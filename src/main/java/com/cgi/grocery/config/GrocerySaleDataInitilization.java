@@ -45,7 +45,7 @@ public class GrocerySaleDataInitilization {
 //            File grocerySaleDataFile = resource.getFile();
 //            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
             IOUtils.setByteArrayMaxOverride(200 * 1024 * 1024);
-            XSSFWorkbook workbook = new XSSFWorkbook(resource.getInputStream());
+            XSSFWorkbook workbook = new XSSFWorkbook(resource.getFile());
             XSSFSheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 String itemName = getItemName(row.getCell(1));
