@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 @Service
 public class GroceryServiceImpl implements GroceryService{
 
-    @Autowired
-    List<PriceData> priceData;
+//    @Autowired
+//    List<PriceData> priceData;
 
     @Override
     public List<GroceryItem> getAllGroceryItems() {
         Map<String, GroceryItem> groceryItemMap = new TreeMap<>();
-        priceData.stream().forEach( e -> groceryItemMap.put(e.getItemName(), new GroceryItem(e.getItemName())));
+       // priceData.stream().forEach( e -> groceryItemMap.put(e.getItemName(), new GroceryItem(e.getItemName())));
         return groceryItemMap.isEmpty()
                 ? new ArrayList<>() : groceryItemMap
                                                 .values()
