@@ -2,9 +2,14 @@ package com.cgi.grocery.config;
 
 import com.cgi.grocery.modal.PriceData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +22,13 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Configuration
 @Slf4j
@@ -37,14 +42,34 @@ public class GrocerySaleDataInitilization {
     @Value("${grocery.file.path}")
     private String filePath;
 
+//    @Bean
+//    public List<PriceData> read() {
+//        List<PriceData> objectList = new ArrayList<>();
+//        try {
+//            Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
+//            OPCPackage container = OPCPackage.open(resource.getFilename());
+//            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(
+//                    container);
+//            XSSFReader xssfReader = new XSSFReader(container);
+//            StylesTable styles = xssfReader.getStylesTable();
+//            InputStream stream = xssfReader.getSheet( "sheet1");
+//
+//            } catch (Exception e) {
+//            e.printStackTrace();
+//            log.error("unexpected error : " + e.getMessage());
+//        }
+//        return objectList;
+//    }
     @Bean
     public List<PriceData> read() {
         List<PriceData> objectList = new ArrayList<>();
         try {
             Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
-            File grocerySaleDataFile = resource.getFile();
-            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
-            XSSFWorkbook workbook = new XSSFWorkbook(grocerySaleDataFile);
+//            File grocerySaleDataFile = resource.getFile();
+//            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
+            //IOUtils.setByteArrayMaxOverride(200 * 1024 * 1024);
+            OPCPackage container = OPCPackage.open(resource.getFilename());
+            XSSFWorkbook workbook = new XSSFWorkbook(container);
             XSSFSheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 String itemName = getItemName(row.getCell(1));
@@ -56,8 +81,9 @@ public class GrocerySaleDataInitilization {
                     objectList.add(priceData);
                 }
             }
-            fileInputStream.close();
+            //fileInputStream.close();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("unexpected error : " + e.getMessage());
         }
         return objectList;

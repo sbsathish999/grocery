@@ -1,13 +1,12 @@
 package com.cgi.grocery.service;
 
+import com.cgi.grocery.modal.GroceryItem;
 import com.cgi.grocery.modal.PriceData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -18,11 +17,13 @@ public class GroceryServiceImpl implements GroceryService{
     List<PriceData> priceData;
 
     @Override
-    public Set<String> getAllGroceryItems() {
-        return priceData == null ? null : priceData
+    public List<GroceryItem> getAllGroceryItems() {
+        Map<String, GroceryItem> groceryItemMap = new TreeMap<>();
+        priceData.stream().forEach( e -> groceryItemMap.put(e.getItemName(), new GroceryItem(e.getItemName())));
+        return groceryItemMap.isEmpty()
+                ? new ArrayList<>() : groceryItemMap
+                                                .values()
                                                 .stream()
-                                                .map(i -> i.getItemName())
-                                                .sorted()
-                                                .collect(Collectors.toCollection(TreeSet :: new));
+                                                .collect(Collectors.toList());
     }
 }
