@@ -1,6 +1,6 @@
 package com.cgi.grocery.service;
 
-import com.cgi.grocery.config.GrocerySaleData;
+import com.cgi.grocery.config.GrocerySaleDataConfiguration;
 import com.cgi.grocery.modal.GroceryItem;
 import com.cgi.grocery.modal.PriceData;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +14,19 @@ import java.util.stream.Collectors;
 @Service
 public class GroceryServiceImpl implements GroceryService{
 
-//    @Autowired
-//    List<PriceData> priceData;
-
       @Autowired
-      GrocerySaleData grocerySaleData;
+      GrocerySaleDataConfiguration grocerySaleDataConfiguration;
+
     @Override
     public List<GroceryItem> getAllGroceryItems() {
         Map<String, GroceryItem> groceryItemMap = new TreeMap<>();
-        grocerySaleData.read().stream().forEach(e -> groceryItemMap.put(e.getItemName(), new GroceryItem(e.getItemName())));
+        List<PriceData> priceData = grocerySaleDataConfiguration.read();
+        if(priceData != null && !priceData.isEmpty()) {
+            priceData.stream()
+                     .forEach(e -> groceryItemMap
+                                        .put(e.getItemName(), new GroceryItem(e.getItemName())));
+
+        }
         return groceryItemMap.isEmpty()
                 ? new ArrayList<>() : groceryItemMap
                                                 .values()

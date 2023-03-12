@@ -1,6 +1,5 @@
 package com.cgi.grocery.service;
 
-import com.cgi.grocery.config.GrocerySaleData;
 import com.cgi.grocery.modal.ItemPriceTrendingByYear;
 import com.cgi.grocery.modal.PriceData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +8,14 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class PriceTrendingServiceImpl implements PriceTrendingService{
-
+    @Autowired
+    PriceService priceService;
     @Override
-    public ItemPriceTrendingByYear getMaximumPriceDataByYear(List<PriceData> priceByItems) {
+    public ItemPriceTrendingByYear getMaximumPriceDataByYear(String itemName) {
+        List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
         Map<String, List<Float>> priceByDateMap = convertToPriceDateMap(priceByItems);
         Map<String, Float> maxPriceByDateMap = calculateMaximumPriceByYear(priceByDateMap);
         List<Float> prices = maxPriceByDateMap.values().stream().collect(Collectors.toList());

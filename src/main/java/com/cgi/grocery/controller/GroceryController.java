@@ -10,17 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/grocery")
-public class GroceryPriceController {
+public class GroceryController {
 
     @Autowired
     PriceService priceService;
@@ -51,11 +48,9 @@ public class GroceryPriceController {
 
     @GetMapping(value = "/sale-list")
     public ResponseEntity getGrocerySaleDataByItem(@RequestParam String itemName){
-        List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
-        ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYear(priceByItems);
+        ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYear(itemName);
         return ResponseEntity.ok(result);
     }
-
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getGrocerySaleDataByItem(){

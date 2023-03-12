@@ -1,25 +1,22 @@
 package com.cgi.grocery.service;
 
-import com.cgi.grocery.config.GrocerySaleData;
+import com.cgi.grocery.config.GrocerySaleDataConfiguration;
 import com.cgi.grocery.modal.PriceData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class PriceServiceImpl implements PriceService{
-//    @Autowired
-//    List<PriceData> fileData;
 
     @Autowired
-    GrocerySaleData grocerySaleData;
+    GrocerySaleDataConfiguration grocerySaleDataConfiguration;
     @Override
     public List<PriceData> getGroceryMaxSaleData(String fileName, String filePath) {
         try {
-            List<PriceData> priceDataList = grocerySaleData.read();
+            List<PriceData> priceDataList = grocerySaleDataConfiguration.read();
             List<PriceData> maxSaleList = filterOnlyMaximumSalesSortedByItemName(priceDataList);
             return maxSaleList;
         } catch (Exception e) {
@@ -31,7 +28,7 @@ public class PriceServiceImpl implements PriceService{
     @Override
     public List<PriceData> getGrocerySaleDataByItem(String itemName) {
         try {
-            List<PriceData> priceDataList = grocerySaleData.read();
+            List<PriceData> priceDataList = grocerySaleDataConfiguration.read();
             List<PriceData> specificItemList = priceDataList
                                                     .stream()
                                                     .filter(priceData -> priceData.getItemName()
