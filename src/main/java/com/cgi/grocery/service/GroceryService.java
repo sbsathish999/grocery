@@ -1,9 +1,9 @@
 package com.cgi.grocery.service;
 
-import java.util.List;
-import java.util.Set;
+import com.cgi.grocery.modal.GroceryItem;
 
+import java.util.List;
 public interface GroceryService {
 
-    Set<String> getAllGroceryItems();
+    List<GroceryItem> getAllGroceryItems();
 }

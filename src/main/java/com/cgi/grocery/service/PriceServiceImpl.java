@@ -1,34 +1,39 @@
 package com.cgi.grocery.service;
 
+import com.cgi.grocery.config.GrocerySaleDataConfiguration;
 import com.cgi.grocery.modal.PriceData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PriceServiceImpl implements PriceService{
-    @Autowired
-    List<PriceData> fileData;
 
+    @Autowired
+    GrocerySaleDataConfiguration grocerySaleDataConfiguration;
     @Override
     public List<PriceData> getGroceryMaxSaleData(String fileName, String filePath) {
+        List<PriceData> maxSaleList = new ArrayList<>();
         try {
-            List<PriceData> priceDataList = fileData;
-            List<PriceData> maxSaleList = filterOnlyMaximumSalesSortedByItemName(priceDataList);
+            List<PriceData> priceDataList = grocerySaleDataConfiguration.read();
+            if(priceDataList != null && !priceDataList.isEmpty()) {
+                maxSaleList = filterOnlyMaximumSalesSortedByItemName(priceDataList);
+            }
             return maxSaleList;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            log.error("unexpected error : " + e.getMessage());
         }
+        return maxSaleList;
     }
 
     @Override
     public List<PriceData> getGrocerySaleDataByItem(String itemName) {
         try {
-            List<PriceData> priceDataList = fileData;
+            List<PriceData> priceDataList = grocerySaleDataConfiguration.read();
             List<PriceData> specificItemList = priceDataList
                                                     .stream()
                                                     .filter(priceData -> priceData.getItemName()
@@ -54,6 +59,6 @@ public class PriceServiceImpl implements PriceService{
                 }
             }
         });
-        return maxMap.values().stream().toList();
+        return maxMap.values().stream().collect(Collectors.toList());
     }
 }
