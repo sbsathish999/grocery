@@ -16,11 +16,14 @@ public class PriceTrendingServiceImpl implements PriceTrendingService{
     @Override
     public ItemPriceTrendingByYear getMaximumPriceDataByYear(String itemName) {
         List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
-        Map<String, List<Float>> priceByDateMap = convertToPriceDateMap(priceByItems);
-        Map<String, Float> maxPriceByDateMap = calculateMaximumPriceByYear(priceByDateMap);
-        List<Float> prices = maxPriceByDateMap.values().stream().collect(Collectors.toList());
-        List<String> years = maxPriceByDateMap.keySet().stream().collect(Collectors.toList());
-        return priceByItems.isEmpty() ? new ItemPriceTrendingByYear() : new ItemPriceTrendingByYear(priceByItems.get(0).getItemName(), prices, years);
+        if(priceByItems != null && !priceByItems.isEmpty()) {
+            Map<String, List<Float>> priceByDateMap = convertToPriceDateMap(priceByItems);
+            Map<String, Float> maxPriceByDateMap = calculateMaximumPriceByYear(priceByDateMap);
+            List<Float> prices = maxPriceByDateMap.values().stream().collect(Collectors.toList());
+            List<String> years = maxPriceByDateMap.keySet().stream().collect(Collectors.toList());
+            return new ItemPriceTrendingByYear(itemName, prices, years);
+        }
+        return null;
     }
     protected Map<String, Float> calculateMaximumPriceByYear(Map<String, List<Float>> priceByDateMap) {
         Map<String, Float> maxPriceByDateMap = new TreeMap<>();
