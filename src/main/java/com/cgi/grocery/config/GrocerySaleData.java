@@ -1,6 +1,7 @@
 package com.cgi.grocery.config;
 
 import com.cgi.grocery.modal.PriceData;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -31,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Service
 @Slf4j
-public class GrocerySaleDataInitilization {
+@Service
+public class GrocerySaleData{
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -42,6 +44,8 @@ public class GrocerySaleDataInitilization {
 
     @Value("${grocery.file.path}")
     private String filePath;
+
+    private static List<PriceData> priceDataList;
 
 //    @Bean
 //    public List<PriceData> read() {
@@ -62,32 +66,34 @@ public class GrocerySaleDataInitilization {
 //        return objectList;
 //    }
    // @Bean
-    public List<PriceData> read() {
-        List<PriceData> objectList = new ArrayList<>();
-        try {
-            Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
+    public synchronized List<PriceData> read() {
+        if(priceDataList == null) {
+            priceDataList = new ArrayList<>();
+            try {
+                Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
 //            File grocerySaleDataFile = resource.getFile();
 //            FileInputStream fileInputStream = new FileInputStream(grocerySaleDataFile);
-            //IOUtils.setByteArrayMaxOverride(200 * 1024 * 1024);
-            OPCPackage container = OPCPackage.open(resource.getFilename());
-            XSSFWorkbook workbook = new XSSFWorkbook(container);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            for (Row row : sheet) {
-                String itemName = getItemName(row.getCell(1));
-                itemName = itemName != null ? itemName.toUpperCase() : null;
-                Date date = getDate(row.getCell(2));
-                Float itemPrice = getItemPrice(row.getCell(3));
-                if(itemName != null && date != null && itemPrice != null) {
-                    PriceData priceData = new PriceData(itemName, date, itemPrice);
-                    objectList.add(priceData);
+                //IOUtils.setByteArrayMaxOverride(200 * 1024 * 1024);
+                OPCPackage container = OPCPackage.open(resource.getFilename());
+                XSSFWorkbook workbook = new XSSFWorkbook(container);
+                XSSFSheet sheet = workbook.getSheetAt(0);
+                for (Row row : sheet) {
+                    String itemName = getItemName(row.getCell(1));
+                    itemName = itemName != null ? itemName.toUpperCase() : null;
+                    Date date = getDate(row.getCell(2));
+                    Float itemPrice = getItemPrice(row.getCell(3));
+                    if (itemName != null && date != null && itemPrice != null) {
+                        PriceData priceData = new PriceData(itemName, date, itemPrice);
+                        priceDataList.add(priceData);
+                    }
                 }
+                //fileInputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("unexpected error : " + e.getMessage());
             }
-            //fileInputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("unexpected error : " + e.getMessage());
         }
-        return objectList;
+        return priceDataList;
     }
 
     private String getItemName(Cell itemCell) {
