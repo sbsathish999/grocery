@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +41,7 @@ public class GrocerySaleDataConfiguration {
         if(priceDataList == null) {
             priceDataList = new ArrayList<>();
             try {
-                Resource resource = resourceLoader.getResource("classpath:" + filePath + "/" + fileName);
+                Resource resource = resourceLoader.getResource("classpath:" + filePath + File.separator + fileName);
                 OPCPackage container = OPCPackage.open(resource.getFilename());
                 XSSFWorkbook workbook = new XSSFWorkbook(container);
                 XSSFSheet sheet = workbook.getSheetAt(0);
