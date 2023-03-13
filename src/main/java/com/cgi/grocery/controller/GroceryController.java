@@ -48,7 +48,7 @@ public class GroceryController {
 
     @GetMapping(value = "/sale-list")
     public ResponseEntity getGrocerySaleDataByItem(@RequestParam String itemName){
-        ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYear(itemName);
+        ItemPriceTrendingByYear result = priceTrendingService.getMaximumPriceDataByYearAPI(itemName);
         return result == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(result);
     }
 
