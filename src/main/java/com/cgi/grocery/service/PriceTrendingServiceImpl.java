@@ -2,17 +2,30 @@ package com.cgi.grocery.service;
 
 import com.cgi.grocery.modal.ItemPriceTrendingByYear;
 import com.cgi.grocery.modal.PriceData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PriceTrendingServiceImpl implements PriceTrendingService{
     @Autowired
     PriceService priceService;
+
+    @Autowired
+    RestTemplate restTemplate;
     @Override
     public ItemPriceTrendingByYear getMaximumPriceDataByYear(String itemName) {
         List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
@@ -25,6 +38,22 @@ public class PriceTrendingServiceImpl implements PriceTrendingService{
         }
         return null;
     }
+
+    @Override
+    public ItemPriceTrendingByYear getMaximumPriceDataByYearAPI(String itemName) {
+        List<PriceData> priceByItems = priceService.getGrocerySaleDataByItem(itemName);
+        if(priceByItems != null && !priceByItems.isEmpty()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<List<PriceData>> httpEntity = new HttpEntity<>(priceByItems, headers);
+            log.info("httpsentity" + httpEntity);
+            ItemPriceTrendingByYear response =  restTemplate.postForObject("http://price-trending-service/grocery/sale-list?itemName="+ itemName
+                                                                        , httpEntity, ItemPriceTrendingByYear.class);
+            return response;
+        }
+        return null;
+    }
+
     protected Map<String, Float> calculateMaximumPriceByYear(Map<String, List<Float>> priceByDateMap) {
         Map<String, Float> maxPriceByDateMap = new TreeMap<>();
         priceByDateMap
