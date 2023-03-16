@@ -8,7 +8,7 @@ CMD java -jar /app/myjar.jar
 
 COPY app-jar/*.jar app.jar
 
-COPY target/classes/data/*.xlsx vegetables.xlsx
+COPY data/*.xlsx vegetables.xlsx
 
 EXPOSE 8080
 
