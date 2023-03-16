@@ -6,7 +6,7 @@ VOLUME /app
 
 CMD java -jar /app/myjar.jar
 
-COPY target/*.jar app.jar
+COPY app-jar/*.jar app.jar
 
 COPY target/classes/data/*.xlsx vegetables.xlsx
 
